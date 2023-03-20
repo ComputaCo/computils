@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "computaco-utils"
+version = "0.1.0"
+description = ""
+authors = ["Jacob Valdez <jacob.valdez@limboid.ai>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "computaco_utils" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openai = "^0.27.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
