@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "computaco-utils"
+name = "computils"
 version = "0.1.0"
 description = ""
 authors = ["Jacob Valdez <jacob.valdez@limboid.ai>"]
 license = "MIT"
-readme = "README.md"
-packages = [{ include = "computaco_utils" }]
+readme = "README"
+packages = [{ include = "computils" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
