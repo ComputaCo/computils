@@ -4,8 +4,8 @@ import json
 
 import openai
 
-from computaco_utils.fns.exponential_backoff import exponential_backoff
-from computaco_utils.engines.base import CompletionEngine, ConversationEngine
+from computils.fns.exponential_backoff import exponential_backoff
+from computils.engines.base import CompletionEngine, ConversationEngine
 
 
 openai.api_key = os.environ["OPENAI_API_KEY"]

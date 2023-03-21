@@ -1,7 +1,7 @@
 import json
 import logging
 
-from computaco_utils.engines.base import ConversationLM
+from computils.engines.base import ConversationLM
 
 
 
