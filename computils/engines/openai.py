@@ -5,7 +5,7 @@ import json
 import openai
 
 from computaco_utils.fns.exponential_backoff import exponential_backoff
-from computaco_utils.engines.base import CompletionLLM, ConversationLM
+from computaco_utils.engines.base import CompletionEngine, ConversationEngine
 
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -14,7 +14,8 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 class OpenAIEngine:
     params: dict
 
-    def __init__(self, model_name, **api_default_kwargs):
+    def __init__(self, model_name, no_multithreading=False, **api_default_kwargs):
+        super().__init__(no_multithreading=no_multithreading)
         self.params = self.PARAM_DEFAULTS[model_name].copy()
         self.params["model"] = model_name
         self.api_default_kwargs = api_default_kwargs
@@ -37,7 +38,7 @@ class OpenAIEngine:
         _kwargs.update(kwargs)
 
 
-class TextGPT(OpenAIEngine, CompletionLLM):
+class TextGPT(OpenAIEngine, CompletionEngine):
 
     PARAM_DEFAULTS = {
         "text-davinci-003": {"max_tokens": 4097},
@@ -51,7 +52,7 @@ class TextGPT(OpenAIEngine, CompletionLLM):
         "code-cushman-001": {"max_tokens": 2048},
     }
 
-    def complete(self, text, *args, **kwargs) -> str:
+    def _complete(self, text, *args, **kwargs) -> str:
         kwargs = self.prepare_kwargs(text, **kwargs)
         kwargs["prompt"] = text
         output = exponential_backoff(
@@ -61,14 +62,14 @@ class TextGPT(OpenAIEngine, CompletionLLM):
         return output
 
 
-class ChatGPT(OpenAIEngine, ConversationLM):
+class ChatGPT(OpenAIEngine, ConversationEngine):
 
     PARAM_DEFAULTS = {
         "gpt-3.5-turbo": {"max_tokens": 4096},
         "gpt-4": {"max_tokens": 8192},
     }
 
-    def chat(self, messages, *args, **kwargs) -> str:
+    def _chat(self, messages, *args, **kwargs) -> str:
         kwargs = self.prepare_kwargs(messages, **kwargs)
         kwargs["messages"] = messages
         output = exponential_backoff(
