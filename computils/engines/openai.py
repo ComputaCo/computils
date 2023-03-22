@@ -20,17 +20,15 @@ class OpenAIEngine:
         self.params["model"] = model_name
         self.api_default_kwargs = api_default_kwargs
 
-    def token_estimate(messages):
-        return int(0.25 * sum(len(message["content"]) for message in messages))
+    def token_estimate(text):
+        return int(0.25 * sum(len(message["content"]) for message in text))
 
-    def prepare_kwargs(self, messages, **kwargs):
+    def prepare_kwargs(self, text, **kwargs):
         _kwargs = self.params.copy()
         _kwargs.update(
             dict(
                 max_tokens=(
-                    ChatGPT.DEFAULT_MODEL_MAX_TOKENS
-                    - self.token_estimate(messages)
-                    - 50
+                    ChatGPT.DEFAULT_MODEL_MAX_TOKENS - self.token_estimate(text) - 50
                 ),
             )
         )
@@ -70,7 +68,7 @@ class ChatGPT(OpenAIEngine, ConversationEngine):
     }
 
     def _chat(self, messages, *args, **kwargs) -> str:
-        kwargs = self.prepare_kwargs(messages, **kwargs)
+        kwargs = self.prepare_kwargs(sum([m["content"] for m in messages]), **kwargs)
         kwargs["messages"] = messages
         output = exponential_backoff(
             fn=(lambda: openai.Completion.create(kwargs)["choices"][0]["text"]),
